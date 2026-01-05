@@ -5,7 +5,7 @@
 <title>XenaMc — Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- FIXED Supabase JS bundle -->
+<!-- Correct Supabase bundle for browser -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 
 <style>
@@ -61,21 +61,23 @@ button {
   <input id="username" type="text" placeholder="Username" />
   <input id="password" type="password" placeholder="Password" />
 
-  <button onclick="login()">Login</button>
+  <button id="loginBtn">Login</button>
   <div class="msg" id="msg"></div>
 </div>
 
 <script>
-  const supabase = supabase.createClient(
+document.addEventListener("DOMContentLoaded", () => {
+  // Make supabase global and available
+  var supabase = supabase.createClient(
     "https://lzejbjlqelatkqnkdshe.supabase.co",
     "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
   );
 
-  async function login() {
+  document.getElementById("loginBtn").addEventListener("click", async () => {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const msg = document.getElementById("msg");
-    msg.textContent = ""; // clear previous
+    msg.textContent = "";
 
     if (!username || !password) {
       msg.textContent = "Enter username and password.";
@@ -84,24 +86,30 @@ button {
 
     const email = username.toLowerCase() + "@xenamc.local";
 
-    // Try login
-    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-    console.log("Login result:", loginData, loginError);
+    try {
+      // Attempt login
+      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+      console.log("Login result:", loginData, loginError);
 
-    // If login fails (no user or wrong credentials), sign up
-    if (loginError) {
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
-      console.log("Signup result:", signUpData, signUpError);
-
-      if (signUpError) {
-        msg.textContent = "Error creating account.";
-        return;
+      // If login fails (user doesn't exist), auto-signup
+      if (loginError) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+        console.log("Signup result:", signUpData, signUpError);
+        if (signUpError) {
+          msg.textContent = "Error creating account.";
+          return;
+        }
       }
-    }
 
-    // Redirect to full page
-    window.location.href = "/full.html";
-  }
+      // Redirect to server full page
+      window.location.href = "/full.html";
+
+    } catch (err) {
+      console.log("Unexpected error:", err);
+      msg.textContent = "An unexpected error occurred.";
+    }
+  });
+});
 </script>
 
 </body>
