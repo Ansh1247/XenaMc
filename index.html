@@ -5,8 +5,8 @@
 <title>XenaMc — Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- Browser-ready Supabase UMD build -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+<!-- Supabase JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Arial; }
@@ -67,8 +67,11 @@ button {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // Use global Supabase object from UMD build
-  var supabase = Supabase.createClient(
+
+  // ⬇ IMPORTANT: supabase global exposes createClient
+  const { createClient } = supabase;
+
+  const supabaseClient = createClient(
     "https://lzejbjlqelatkqnkdshe.supabase.co",
     "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
   );
@@ -88,24 +91,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Attempt login
-      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-      console.log("Login result:", loginData, loginError);
+      const { data: loginData, error: loginError } =
+        await supabaseClient.auth.signInWithPassword({ email, password });
 
-      // Auto-signup if login fails
       if (loginError) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
-        console.log("Signup result:", signUpData, signUpError);
+        // Auto-signup if login fails
+        const { data: signUpData, error: signUpError } =
+          await supabaseClient.auth.signUp({ email, password });
+
         if (signUpError) {
           msg.textContent = "Error creating account.";
           return;
         }
       }
 
-      // Redirect to server full page
+      // Redirect after login/signup
       window.location.href = "/full.html";
-
     } catch (err) {
-      console.log("Unexpected error:", err);
+      console.error(err);
       msg.textContent = "An unexpected error occurred.";
     }
   });
