@@ -48,24 +48,23 @@ p { font-size: 14px; color: #aaa; line-height: 1.6; }
 
 <script>
   const supabase = supabaseJs.createClient(
-    "https://YOUR_PROJECT_ID.supabase.co",
-    "YOUR_ANON_PUBLIC_KEY"
+    "https://lzejbjlqelatkqnkdshe.supabase.co",
+    "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
   );
 
   const MEMBER_LIMIT = 500;
 
   async function updateMemberCount() {
-    // Fetch number of users from Supabase
     const { count, error } = await supabase
-      .from("profiles")
+      .from("users") // or your table that stores profiles
       .select("*", { count: "exact", head: true });
 
     if (!error && count !== null) {
-      document.getElementById("member-count").textContent = `${Math.min(count, MEMBER_LIMIT)} / ${MEMBER_LIMIT}`;
+      document.getElementById("member-count").textContent =
+        `${Math.min(count, MEMBER_LIMIT)} / ${MEMBER_LIMIT}`;
     }
   }
 
-  // Update immediately on page load
   updateMemberCount();
 </script>
 
