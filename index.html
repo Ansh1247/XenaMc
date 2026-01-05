@@ -68,7 +68,7 @@ button {
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ⬇ IMPORTANT: supabase global exposes createClient
+  // Get createClient from Supabase global
   const { createClient } = supabase;
 
   const supabaseClient = createClient(
@@ -83,37 +83,4 @@ document.addEventListener("DOMContentLoaded", () => {
     msg.textContent = "";
 
     if (!username || !password) {
-      msg.textContent = "Enter username and password.";
-      return;
-    }
-
-    const email = username.toLowerCase() + "@xenamc.local";
-
-    try {
-      // Attempt login
-      const { data: loginData, error: loginError } =
-        await supabaseClient.auth.signInWithPassword({ email, password });
-
-      if (loginError) {
-        // Auto-signup if login fails
-        const { data: signUpData, error: signUpError } =
-          await supabaseClient.auth.signUp({ email, password });
-
-        if (signUpError) {
-          msg.textContent = "Error creating account.";
-          return;
-        }
-      }
-
-      // Redirect after login/signup
-      window.location.href = "/full.html";
-    } catch (err) {
-      console.error(err);
-      msg.textContent = "An unexpected error occurred.";
-    }
-  });
-});
-</script>
-
-</body>
-</html>
+      msg.text
