@@ -5,8 +5,8 @@
 <title>XenaMc — Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- Correct Supabase bundle for browser -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+<!-- Browser-ready Supabase UMD build -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
 
 <style>
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Arial; }
@@ -67,8 +67,8 @@ button {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // Make supabase global and available
-  var supabase = supabase.createClient(
+  // Use global Supabase object from UMD build
+  var supabase = Supabase.createClient(
     "https://lzejbjlqelatkqnkdshe.supabase.co",
     "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
   );
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
       console.log("Login result:", loginData, loginError);
 
-      // If login fails (user doesn't exist), auto-signup
+      // Auto-signup if login fails
       if (loginError) {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
         console.log("Signup result:", signUpData, signUpError);
