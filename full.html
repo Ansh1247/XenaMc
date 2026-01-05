@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>XenaMc — Server Full</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Arial; }
+body {
+  margin: 0;
+  height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.box {
+  max-width: 420px;
+  padding: 36px;
+  background: #0a0a0a;
+  border-radius: 22px;
+  text-align: center;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+}
+h1 { font-size: 22px; margin-bottom: 14px; }
+.count {
+  font-size: 46px;
+  font-weight: 700;
+  margin: 16px 0;
+}
+p { font-size: 14px; color: #aaa; line-height: 1.6; }
+</style>
+</head>
+
+<body>
+  <div class="box">
+    <h1>XenaMc is currently full</h1>
+    <div class="count" id="member-count">500 / 500</div>
+    <p>
+      Sorry, too many members have already signed up to this program.<br>
+      Please wait for slots to open.
+    </p>
+  </div>
+
+<script>
+  const supabase = supabaseJs.createClient(
+    "https://YOUR_PROJECT_ID.supabase.co",
+    "YOUR_ANON_PUBLIC_KEY"
+  );
+
+  const MEMBER_LIMIT = 500;
+
+  async function updateMemberCount() {
+    // Fetch number of users from Supabase
+    const { count, error } = await supabase
+      .from("profiles")
+      .select("*", { count: "exact", head: true });
+
+    if (!error && count !== null) {
+      document.getElementById("member-count").textContent = `${Math.min(count, MEMBER_LIMIT)} / ${MEMBER_LIMIT}`;
+    }
+  }
+
+  // Update immediately on page load
+  updateMemberCount();
+</script>
+
+</body>
+</html>
