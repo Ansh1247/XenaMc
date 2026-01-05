@@ -80,20 +80,30 @@ button {
       return;
     }
 
-    // Convert username to internal fake email
     const email = username.toLowerCase() + "@xenamc.local";
 
-    const { error } = await supabase.auth.signInWithPassword({
+    // Try login first
+    let { error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
+    // If login fails, auto-signup
     if (error) {
-      msg.textContent = "Invalid username or password.";
-    } else {
-      // Redirect to the “server full” page after successful login
-      window.location.href = "/full.html";
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (signUpError) {
+        msg.textContent = "Error creating account.";
+        console.log("SignUp error:", signUpError);
+        return;
+      }
     }
+
+    // Redirect to Server Full page
+    window.location.href = "/full.html";
   }
 </script>
 
