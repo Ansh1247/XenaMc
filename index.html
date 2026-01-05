@@ -65,6 +65,7 @@ button {
 </div>
 
 <script>
+  // Initialize Supabase
   const supabase = supabaseJs.createClient(
     "https://lzejbjlqelatkqnkdshe.supabase.co",
     "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
@@ -82,28 +83,27 @@ button {
 
     const email = username.toLowerCase() + "@xenamc.local";
 
-    // Try login first
-    let { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    try {
+      // Attempt login
+      let { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    // If login fails, auto-signup
-    if (error) {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password
-      });
-
-      if (signUpError) {
-        msg.textContent = "Error creating account.";
-        console.log("SignUp error:", signUpError);
-        return;
+      // If login fails, auto-signup
+      if (error) {
+        const { error: signUpError } = await supabase.auth.signUp({ email, password });
+        if (signUpError) {
+          msg.textContent = "Error creating account.";
+          console.log("SignUp error:", signUpError);
+          return;
+        }
       }
-    }
 
-    // Redirect to Server Full page
-    window.location.href = "/full.html";
+      // Redirect after login/signup completes
+      window.location.href = "/full.html";
+
+    } catch (err) {
+      console.log("Unexpected error:", err);
+      msg.textContent = "An unexpected error occurred.";
+    }
   }
 </script>
 
