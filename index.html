@@ -5,7 +5,8 @@
 <title>XenaMc — Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- FIXED Supabase JS bundle -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 
 <style>
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Arial; }
@@ -65,8 +66,7 @@ button {
 </div>
 
 <script>
-  // Initialize Supabase
-  const supabase = supabaseJs.createClient(
+  const supabase = supabase.createClient(
     "https://lzejbjlqelatkqnkdshe.supabase.co",
     "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
   );
@@ -75,6 +75,7 @@ button {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
     const msg = document.getElementById("msg");
+    msg.textContent = ""; // clear previous
 
     if (!username || !password) {
       msg.textContent = "Enter username and password.";
@@ -83,27 +84,23 @@ button {
 
     const email = username.toLowerCase() + "@xenamc.local";
 
-    try {
-      // Attempt login
-      let { error } = await supabase.auth.signInWithPassword({ email, password });
+    // Try login
+    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+    console.log("Login result:", loginData, loginError);
 
-      // If login fails, auto-signup
-      if (error) {
-        const { error: signUpError } = await supabase.auth.signUp({ email, password });
-        if (signUpError) {
-          msg.textContent = "Error creating account.";
-          console.log("SignUp error:", signUpError);
-          return;
-        }
+    // If login fails (no user or wrong credentials), sign up
+    if (loginError) {
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+      console.log("Signup result:", signUpData, signUpError);
+
+      if (signUpError) {
+        msg.textContent = "Error creating account.";
+        return;
       }
-
-      // Redirect after login/signup completes
-      window.location.href = "/full.html";
-
-    } catch (err) {
-      console.log("Unexpected error:", err);
-      msg.textContent = "An unexpected error occurred.";
     }
+
+    // Redirect to full page
+    window.location.href = "/full.html";
   }
 </script>
 
