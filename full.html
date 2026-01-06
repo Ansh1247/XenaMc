@@ -4,11 +4,8 @@
 <meta charset="UTF-8">
 <title>XenaMc — Server Full</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-* { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Arial; }
+* { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, Arial; }
 body {
   margin: 0;
   height: 100vh;
@@ -17,56 +14,39 @@ body {
   align-items: center;
   justify-content: center;
   color: #fff;
-}
-.box {
-  max-width: 420px;
-  padding: 36px;
-  background: #0a0a0a;
-  border-radius: 22px;
   text-align: center;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.9);
 }
-h1 { font-size: 22px; margin-bottom: 14px; }
-.count {
-  font-size: 46px;
-  font-weight: 700;
-  margin: 16px 0;
+.card {
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  background: #0a0a0a;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
 }
-p { font-size: 14px; color: #aaa; line-height: 1.6; }
+h1 { font-size: 32px; margin-bottom: 10px; }
+h2 { font-size: 22px; margin-bottom: 20px; color: #888; }
+p { font-size: 16px; margin-top: 20px; color: #aaa; }
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+  margin-top: 20px;
+}
 </style>
 </head>
 
 <body>
-  <div class="box">
-    <h1>XenaMc is currently full</h1>
-    <div class="count" id="member-count">500 / 500</div>
-    <p>
-      Sorry, too many members have already signed up to this program.<br>
-      Please wait for slots to open.
-    </p>
-  </div>
-
-<script>
-  const supabase = supabaseJs.createClient(
-    "https://lzejbjlqelatkqnkdshe.supabase.co",
-    "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
-  );
-
-  const MEMBER_LIMIT = 500;
-
-  async function updateMemberCount() {
-    const { count, error } = await supabase
-      .from("users") // or your table that stores profiles
-      .select("*", { count: "exact", head: true });
-
-    if (!error && count !== null) {
-      document.getElementById("member-count").textContent =
-        `${Math.min(count, MEMBER_LIMIT)} / ${MEMBER_LIMIT}`;
-    }
-  }
-
-  updateMemberCount();
-</script>
-
+<div class="card">
+  <h1>Sorry!</h1>
+  <h2>Too many members have already signed up to this program</h2>
+  <p>Current server capacity: <strong>500 / 500 members</strong></p>
+  <button onclick="window.location.href='index.html'">Go Back to Login</button>
+</div>
 </body>
 </html>
