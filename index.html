@@ -5,9 +5,6 @@
 <title>XenaMc — Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- Supabase JS CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Arial; }
 body {
@@ -58,29 +55,29 @@ button {
   <h1>XenaMc</h1>
   <div class="subtitle">Minecraft Server Login</div>
 
-  <input id="username" type="text" placeholder="Username" />
-  <input id="password" type="password" placeholder="Password" />
+  <input id="username" type="text" placeholder="Username" autocomplete="username" />
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
 
   <button id="loginBtn">Login</button>
   <div class="msg" id="msg"></div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
 
-  // Get createClient from Supabase global
-  const { createClient } = supabase;
+  // Check for empty fields
+  if(!username || !password) {
+    msg.textContent = "Enter username and password.";
+    return;
+  }
 
-  const supabaseClient = createClient(
-    "https://lzejbjlqelatkqnkdshe.supabase.co",
-    "sb_publishable_1RvGSDU8JPM_uFe_InBW3Q_iGRO8ENB"
-  );
+  // Fake login successful → redirect to full page
+  window.location.href = "/full.html";
+});
+</script>
 
-  document.getElementById("loginBtn").addEventListener("click", async () => {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value;
-    const msg = document.getElementById("msg");
-    msg.textContent = "";
-
-    if (!username || !password) {
-      msg.text
+</body>
+</html>
